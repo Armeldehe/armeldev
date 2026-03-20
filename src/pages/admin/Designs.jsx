@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { MdAdd, MdDelete, MdPalette, MdClose, MdOpenInNew } from "react-icons/md";
 import api from "../../services/api";
 
 const CATS = ["Poster", "Banner", "Social Media", "Logo", "Autre"];
