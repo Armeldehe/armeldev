@@ -1,22 +1,64 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MdAdd, MdDelete, MdPalette, MdClose, MdOpenInNew } from "react-icons/md";
+import api from "../../services/api";
 
-const STORAGE_KEY = "adminDesigns";
-const CATS = ["Poster", "Banner", "Social Media"];
-const emptyDesign = { id: "", title: "", description: "", imageUrl: "", category: "Poster" };
-const catColors = { Poster: "bg-violet-500/15 text-violet-400 border-violet-500/30", Banner: "bg-blue-500/15 text-blue-400 border-blue-500/30", "Social Media": "bg-rose-500/15 text-rose-400 border-rose-500/30" };
+const CATS = ["Poster", "Banner", "Social Media", "Logo", "Autre"];
+const emptyDesign = { title: "", description: "", imageUrl: "", category: "Poster" };
+const catColors = { 
+  Poster: "bg-violet-500/15 text-violet-400 border-violet-500/30", 
+  Banner: "bg-blue-500/15 text-blue-400 border-blue-500/30", 
+  "Social Media": "bg-rose-500/15 text-rose-400 border-rose-500/30",
+  Logo: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+  Autre: "bg-slate-500/15 text-slate-400 border-slate-500/30"
+};
 
 export default function Designs() {
   const [designs, setDesigns] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(false);
   const [form, setForm] = useState(emptyDesign);
   const [filter, setFilter] = useState("Tous");
 
-  useEffect(() => { setDesigns(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]")); }, []);
-  const save = (u) => { setDesigns(u); localStorage.setItem(STORAGE_KEY, JSON.stringify(u)); };
-  const handleSubmit = (e) => { e.preventDefault(); save([...designs, { ...form, id: Date.now().toString() }]); setModal(false); setForm(emptyDesign); };
-  const handleDelete = (id) => { if (!confirm("Supprimer ce design ?")) return; save(designs.filter(d => d.id !== id)); };
+  useEffect(() => {
+    fetchDesigns();
+  }, []);
+
+  const fetchDesigns = async () => {
+    try {
+      setLoading(true);
+      const { data } = await api.get("/designs");
+      setDesigns(data.data || []);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des designs:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await api.post("/designs", form);
+      setDesigns([data.data, ...designs]);
+      setModal(false);
+      setForm(emptyDesign);
+    } catch (error) {
+      alert("Erreur lors de la création du design");
+      console.error(error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm("Supprimer ce design ?")) return;
+    try {
+      await api.delete(`/designs/${id}`);
+      setDesigns(designs.filter(d => d._id !== id));
+    } catch (error) {
+      alert("Erreur lors de la suppression");
+      console.error(error);
+    }
+  };
+
   const filtered = filter === "Tous" ? designs : designs.filter(d => d.category === filter);
 
   return (

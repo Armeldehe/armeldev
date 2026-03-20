@@ -1,15 +1,14 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { MdOpenInNew } from "react-icons/md";
-
-function getDesigns() {
-  try { return JSON.parse(localStorage.getItem("adminDesigns") || "[]"); } catch { return []; }
-}
+import api from "../services/api";
 
 const catColors = {
-  Poster:       "bg-violet-500/15 text-violet-300",
-  Banner:       "bg-blue-500/15 text-blue-300",
+  Poster: "bg-violet-500/15 text-violet-300",
+  Banner: "bg-blue-500/15 text-blue-300",
   "Social Media": "bg-rose-500/15 text-rose-300",
+  Logo: "bg-emerald-500/15 text-emerald-300",
+  Autre: "bg-slate-500/15 text-slate-300",
 };
 
 // Composant carte avec effet tilt 3D
@@ -19,18 +18,18 @@ function TiltCard({ children, className }) {
   const handleMouseMove = (e) => {
     const card = cardRef.current;
     if (!card) return;
-    const rect   = card.getBoundingClientRect();
-    const cx     = (e.clientX - rect.left) / rect.width  - 0.5;
-    const cy     = (e.clientY - rect.top)  / rect.height - 0.5;
+    const rect = card.getBoundingClientRect();
+    const cx = (e.clientX - rect.left) / rect.width - 0.5;
+    const cy = (e.clientY - rect.top) / rect.height - 0.5;
     card.style.transform = `perspective(800px) rotateX(${-cy * 12}deg) rotateY(${cx * 12}deg) scale(1.02)`;
-    card.style.boxShadow  = `${cx * 20}px ${cy * 20}px 40px rgba(124,58,237,0.25)`;
+    card.style.boxShadow = `${cx * 20}px ${cy * 20}px 40px rgba(124,58,237,0.25)`;
   };
 
   const handleMouseLeave = () => {
     const card = cardRef.current;
     if (!card) return;
     card.style.transform = "";
-    card.style.boxShadow  = "";
+    card.style.boxShadow = "";
   };
 
   return (
@@ -44,7 +43,15 @@ function TiltCard({ children, className }) {
 }
 
 export default function CanvaDesigns() {
-  const designs = getDesigns();
+  const [designs, setDesigns] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.get("/designs")
+      .then(({ data }) => setDesigns(data.data || []))
+      .catch(err => console.error("Erreur designs:", err))
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <section id="designs" className="section-padding relative overflow-hidden">
@@ -62,7 +69,13 @@ export default function CanvaDesigns() {
           </p>
         </motion.div>
 
-        {designs.length === 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-64 rounded-2xl bg-dark-card border border-dark-border animate-pulse" />
+            ))}
+          </div>
+        ) : designs.length === 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[1, 2, 3].map(i => (
               <motion.div key={i}
@@ -85,7 +98,7 @@ export default function CanvaDesigns() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {designs.map((d, i) => (
-              <motion.div key={d.id}
+              <motion.div key={d._id}
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
@@ -127,3 +140,4 @@ export default function CanvaDesigns() {
     </section>
   );
 }
+
