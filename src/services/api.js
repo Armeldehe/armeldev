@@ -5,8 +5,15 @@
 
 import axios from "axios";
 
+let baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+
+// Sécurité : s'assurer que l'URL finit par /api si c'est une URL Render/production
+if (baseUrl.includes("onrender.com") && !baseUrl.endsWith("/api")) {
+  baseUrl = baseUrl.replace(/\/$/, "") + "/api";
+}
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
+  baseURL: baseUrl,
   headers: { "Content-Type": "application/json" },
 });
 
