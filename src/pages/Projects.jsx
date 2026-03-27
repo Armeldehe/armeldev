@@ -11,14 +11,18 @@ export default function Projects() {
   const [projects, setProjects] = useState([]);
   const [filter, setFilter]     = useState("Tous");
   const [allTechs, setAllTechs] = useState([]);
+  const [loading, setLoading]   = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     api.get("/projects").then(({ data }) => {
       const projs = data.data || [];
       setProjects(projs);
       const techs = [...new Set(projs.flatMap(p => p.technologies || []))];
       setAllTechs(techs);
-    }).catch(() => {});
+    })
+    .catch(() => {})
+    .finally(() => setLoading(false));
   }, []);
 
   const filtered = filter === "Tous"
@@ -55,7 +59,24 @@ export default function Projects() {
         )}
 
         {/* Grille */}
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map(i => (
+              <div key={i} className="card bg-dark-card border border-dark-border rounded-2xl overflow-hidden animate-pulse">
+                <div className="h-48 bg-white/5" />
+                <div className="p-5">
+                  <div className="h-5 w-3/4 bg-white/5 rounded mb-3" />
+                  <div className="h-4 w-full bg-white/5 rounded mb-2" />
+                  <div className="h-4 w-2/3 bg-white/5 rounded mb-4" />
+                  <div className="flex gap-2">
+                    <div className="h-5 w-12 bg-white/5 rounded-full" />
+                    <div className="h-5 w-12 bg-white/5 rounded-full" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="text-center py-20 text-white/20">
             <MdCode size={48} className="mx-auto mb-3" />
             <p>Aucun projet pour l'instant.</p>

@@ -21,9 +21,14 @@ const catIcons = { Frontend: "🎨", Backend: "⚙️", Database: "🗄️", Too
 export default function Skills() {
   const [skills,  setSkills]  = useState([]);
   const [active,  setActive]  = useState("Frontend");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get("/skills").then(({ data }) => setSkills(data.data)).catch(() => {});
+    setLoading(true);
+    api.get("/skills")
+      .then(({ data }) => setSkills(data.data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   const filtered = skills.filter(s => s.category === active);
@@ -62,40 +67,49 @@ export default function Skills() {
 
         {/* Barres de compétence */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {filtered.length > 0
-            ? filtered.map((skill, i) => (
-                <motion.div key={skill._id}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08, duration: 0.5 }}
-                  className="bg-dark-card border border-dark-border rounded-2xl p-5"
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      {skill.icon && <span className="text-xl">{skill.icon}</span>}
-                      <span className="font-semibold text-white text-sm">{skill.name}</span>
-                    </div>
-                    <span className="text-xs text-white/40 font-medium">{skill.level}</span>
-                  </div>
-                  <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${levelPercent[skill.level] || 50}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1, delay: i * 0.08, ease: "easeOut" }}
-                      className={`h-full rounded-full bg-gradient-to-r ${levelColor[skill.level] || "from-primary to-primary-light"}`}
-                    />
-                  </div>
-                </motion.div>
-              ))
-            : (
-                // Fallback quand pas de données API
-                <div className="col-span-2 text-center py-12 text-white/30 text-sm">
-                  Ajoutez des compétences depuis le dashboard admin pour les voir ici.
+          {loading ? (
+            // Skeleton Loader
+            [1, 2, 3, 4].map(i => (
+              <div key={i} className="bg-dark-card border border-dark-border rounded-2xl p-5 animate-pulse">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="h-4 w-32 bg-white/5 rounded" />
+                  <div className="h-3 w-12 bg-white/5 rounded" />
                 </div>
-              )
-          }
+                <div className="h-1.5 bg-white/5 rounded-full" />
+              </div>
+            ))
+          ) : filtered.length > 0 ? (
+            filtered.map((skill, i) => (
+              <motion.div key={skill._id}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08, duration: 0.5 }}
+                className="bg-dark-card border border-dark-border rounded-2xl p-5"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    {skill.icon && <span className="text-xl">{skill.icon}</span>}
+                    <span className="font-semibold text-white text-sm">{skill.name}</span>
+                  </div>
+                  <span className="text-xs text-white/40 font-medium">{skill.level}</span>
+                </div>
+                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    whileInView={{ width: `${levelPercent[skill.level] || 50}%` }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1, delay: i * 0.08, ease: "easeOut" }}
+                    className={`h-full rounded-full bg-gradient-to-r ${levelColor[skill.level] || "from-primary to-primary-light"}`}
+                  />
+                </div>
+              </motion.div>
+            ))
+          ) : (
+            <div className="col-span-2 text-center py-12 text-white/30 text-sm">
+              Ajoutez des compétences depuis le dashboard admin pour les voir ici.
+            </div>
+          )}
         </div>
       </div>
     </section>
