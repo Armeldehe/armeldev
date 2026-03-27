@@ -1,7 +1,7 @@
 // Sidebar.jsx - Navigation latérale admin (routes /admin/*)
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { MdDashboard, MdWork, MdCode, MdEmail, MdVideoLibrary, MdPalette, MdLogout } from "react-icons/md";
+import { MdDashboard, MdWork, MdCode, MdEmail, MdVideoLibrary, MdPalette, MdSettings, MdLogout } from "react-icons/md";
 
 const navItems = [
   { path: "/admin/dashboard", icon: MdDashboard, label: "Dashboard" },
@@ -10,6 +10,7 @@ const navItems = [
   { path: "/admin/messages",  icon: MdEmail,     label: "Messages" },
   { path: "/admin/videos",    icon: MdVideoLibrary, label: "Vidéos CapCut" },
   { path: "/admin/designs",   icon: MdPalette,   label: "Designs Canva" },
+  { path: "/admin/settings",  icon: MdSettings,  label: "Paramètres" },
 ];
 
 export default function Sidebar() {

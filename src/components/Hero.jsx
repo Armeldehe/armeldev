@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
-import { MdArrowForward, MdMail } from "react-icons/md";
+import { MdArrowForward, MdMail, MdOpenInNew } from "react-icons/md";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import ThreeScene from "./ThreeScene";
@@ -153,7 +153,7 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.4 }}
-            className="flex flex-col sm:flex-row items-start gap-4 mb-10"
+            className="flex flex-wrap items-center gap-4 mb-10"
           >
             <Link to="/projects" className="btn-primary">
               Voir mes projets <MdArrowForward size={18} />
@@ -161,6 +161,13 @@ export default function Hero() {
             <Link to="/contact" className="btn-outline">
               <MdMail size={18} /> Me contacter
             </Link>
+            <a 
+              href="/CV_Armel_Dehe.pdf" 
+              download 
+              className="px-6 py-3 rounded-xl border border-white/10 text-white/70 hover:text-white hover:border-primary/50 hover:bg-primary/10 transition-all duration-300 flex items-center gap-2 text-sm font-medium"
+            >
+              <MdOpenInNew size={18} /> Télécharger CV
+            </a>
           </motion.div>
 
           {/* Socials */}

@@ -19,6 +19,7 @@ import AdminSkills from "./pages/admin/Skills";
 import Messages from "./pages/admin/Messages";
 import Videos from "./pages/admin/Videos";
 import Designs from "./pages/admin/Designs";
+import Settings from "./pages/admin/Settings";
 import Sidebar from "./components/admin/Sidebar";
 import AdminNavbar from "./components/admin/AdminNavbar";
 
@@ -55,6 +56,7 @@ function App() {
         <Route path="/admin/messages" element={<PrivateRoute><AdminLayout><Messages /></AdminLayout></PrivateRoute>} />
         <Route path="/admin/videos" element={<PrivateRoute><AdminLayout><Videos /></AdminLayout></PrivateRoute>} />
         <Route path="/admin/designs" element={<PrivateRoute><AdminLayout><Designs /></AdminLayout></PrivateRoute>} />
+        <Route path="/admin/settings" element={<PrivateRoute><AdminLayout><Settings /></AdminLayout></PrivateRoute>} />
 
         {/* ═══════════════════════════════════════
             PORTFOLIO ROUTES (pages publiques)
