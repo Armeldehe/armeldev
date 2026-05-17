@@ -5,7 +5,8 @@ import { FaRobot } from "react-icons/fa";
 import axios from "axios";
 
 // ─── Configuration ─────────────────────────────────────────────────────────
-const API_URL = "http://localhost:5000/api/ai/chat";
+const BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+const API_URL = BASE.replace(/\/api\/?$/, "") + "/api/ai/chat";
 
 const SUGGESTIONS = [
   { label: "🚀 Mes projets",     message: "Quels projets avez-vous réalisés ?" },

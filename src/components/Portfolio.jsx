@@ -14,7 +14,12 @@ export default function Portfolio() {
   const [hovered,  setHovered]  = useState(null);
 
   useEffect(() => {
-    api.get("/projects").then(({ data }) => setProjects(data.data?.slice(0,6)||[])).catch(()=>{});
+    api.get("/projects").then(({ data }) => {
+      const projs = data.data || [];
+      // Trier : featured en premier
+      projs.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+      setProjects(projs.slice(0, 6));
+    }).catch(()=>{});
   }, []);
 
   return (

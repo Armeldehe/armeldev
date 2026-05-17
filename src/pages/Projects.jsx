@@ -25,9 +25,10 @@ export default function Projects() {
     .finally(() => setLoading(false));
   }, []);
 
+  const sorted = [...projects].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
   const filtered = filter === "Tous"
-    ? projects
-    : projects.filter(p => p.technologies?.includes(filter));
+    ? sorted
+    : sorted.filter(p => p.technologies?.includes(filter));
 
   return (
     <>
